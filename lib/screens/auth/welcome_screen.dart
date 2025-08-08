@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 22,
+                      fontSize: 14,
                       shadows: [
                         Shadow(
                           offset: Offset(0, 1),
@@ -114,9 +114,9 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const Text(
-                'مرحبا بك في DZ SHOPING',
+                'DZ SHOPING',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Colors.teal,
                 ),
