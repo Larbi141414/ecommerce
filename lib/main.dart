@@ -8,11 +8,12 @@ import 'screens/auth/register_screen.dart';
 import 'screens/auth/login_screen.dart';
 
 import 'screens/user/user_home.dart';
-import 'screens/user/recharge_request_screen.dart';   // <-- أضف هذا السطر
+import 'screens/user/recharge_request_screen.dart';
 
 import 'screens/admin/admin_screen.dart';
 import 'screens/admin/user_management_screen.dart';
 import 'screens/admin/product_management_screen.dart';
+import 'screens/admin/recharge_requests_screen.dart';  // أضف هذا السطر (شاشة طلبات الشحن للأدمن)
 
 void main() {
   runApp(const MyApp());
@@ -48,10 +49,11 @@ class MyApp extends StatelessWidget {
               '/register': (context) => const RegisterScreen(),
               '/login': (context) => const LoginScreen(),
               '/user_home': (context) => const UserHome(),
-              '/recharge_request': (context) => const RechargeRequestScreen(),   // <-- أضف هذا السطر
+              '/recharge_request': (context) => const RechargeRequestScreen(),
               '/admin': (context) => const AdminScreen(),
               '/admin/users': (context) => const UserManagementScreen(),
               '/admin/products': (context) => const ProductManagementScreen(),
+              '/admin/recharge_requests': (context) => const RechargeRequestsScreen(), // أضف هذا السطر
             },
           );
         },

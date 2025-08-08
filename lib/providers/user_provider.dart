@@ -1,28 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:math';
 
 class User {
-  String id;
-  String name;
-  String email;
-  String password;
+  final String id;
+  final String name;
+  final String email;
   double balance;
 
-  User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.password,
-    this.balance = 0.0,
-  });
+  User({required this.id, required this.name, required this.email, this.balance = 0.0});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
       'email': email,
-      'password': password,
       'balance': balance,
     };
   }
@@ -32,26 +25,22 @@ class User {
       id: map['id'],
       name: map['name'],
       email: map['email'],
-      password: map['password'],
       balance: (map['balance'] ?? 0).toDouble(),
     );
   }
 }
 
-// طلب شحن رصيد (Recharge Request)
 class RechargeRequest {
-  String id;
-  String userId;
-  double amount;
-  String status; // pending, completed, rejected
-  DateTime timestamp;
+  final String id; // رقم فريد
+  final String userId;
+  final double amount;
+  final String receiptImagePath;
 
   RechargeRequest({
     required this.id,
     required this.userId,
     required this.amount,
-    this.status = 'pending',
-    required this.timestamp,
+    required this.receiptImagePath,
   });
 
   Map<String, dynamic> toMap() {
@@ -59,8 +48,7 @@ class RechargeRequest {
       'id': id,
       'userId': userId,
       'amount': amount,
-      'status': status,
-      'timestamp': timestamp.toIso8601String(),
+      'receiptImagePath': receiptImagePath,
     };
   }
 
@@ -69,152 +57,46 @@ class RechargeRequest {
       id: map['id'],
       userId: map['userId'],
       amount: (map['amount'] ?? 0).toDouble(),
-      status: map['status'] ?? 'pending',
-      timestamp: DateTime.parse(map['timestamp']),
+      receiptImagePath: map['receiptImagePath'],
     );
   }
 }
 
 class UserProvider with ChangeNotifier {
   List<User> _users = [];
-  User? _currentUser;
+  User? currentUser;
 
   List<RechargeRequest> _rechargeRequests = [];
 
-  User? get currentUser => _currentUser;
   List<User> get allUsers => _users;
   List<RechargeRequest> get rechargeRequests => _rechargeRequests;
 
-  UserProvider() {
-    _init();
-  }
-
-  Future<void> _init() async {
-    await loadUsers();
-    await loadCurrentUser();
-    await loadRechargeRequests();
-  }
-
-  // تحميل المستخدمين
+  // لتحميل المستخدمين (يمكن تعديلها حسب تخزينك)
   Future<void> loadUsers() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? usersData = prefs.getString('users');
-    if (usersData != null) {
-      List<dynamic> decoded = jsonDecode(usersData);
-      _users = decoded.map((userMap) => User.fromMap(userMap)).toList();
+    final data = prefs.getString('users');
+    if (data != null) {
+      final List<dynamic> decoded = jsonDecode(data);
+      _users = decoded.map((e) => User.fromMap(e)).toList();
     }
     notifyListeners();
   }
 
-  // حفظ المستخدمين
   Future<void> saveUsers() async {
     final prefs = await SharedPreferences.getInstance();
-    List<Map<String, dynamic>> mappedUsers = _users.map((u) => u.toMap()).toList();
-    await prefs.setString('users', jsonEncode(mappedUsers));
+    List<Map<String, dynamic>> mapped = _users.map((e) => e.toMap()).toList();
+    await prefs.setString('users', jsonEncode(mapped));
   }
 
-  // تحميل المستخدم الحالي
-  Future<void> loadCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('currentUserId');
-    if (userId != null) {
-      if (userId == "0") {
-        _currentUser = User(
-          id: "0",
-          name: "Admin",
-          email: "larbilarabi06@gmail.com",
-          password: "Miral1992Miro",
-        );
-      } else {
-        _currentUser = _users.firstWhere(
-          (u) => u.id == userId,
-          orElse: () => User(id: '', name: '', email: '', password: ''),
-        );
-        if (_currentUser!.id.isEmpty) _currentUser = null;
-      }
-    }
-    notifyListeners();
-  }
-
-  // حفظ المستخدم الحالي
-  Future<void> saveCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (_currentUser != null) {
-      await prefs.setString('currentUserId', _currentUser!.id);
-    } else {
-      await prefs.remove('currentUserId');
-    }
-  }
-
-  // تسجيل مستخدم جديد
-  Future<bool> register(String name, String email, String password) async {
-    await loadUsers();
-    bool exists = _users.any((u) => u.email == email);
-    if (exists) return false;
-
-    final newUser = User(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      name: name,
-      email: email,
-      password: password,
-    );
-
-    _users.add(newUser);
+  Future<bool> addBalance(String userId, double amount) async {
+    final user = _users.firstWhere((u) => u.id == userId, orElse: () => User(id: '', name: '', email: ''));
+    if (user.id.isEmpty) return false;
+    user.balance += amount;
     await saveUsers();
+    notifyListeners();
     return true;
   }
 
-  // تسجيل الدخول
-  Future<bool> login(String email, String password) async {
-    await loadUsers();
-
-    if (email == "larbilarabi06@gmail.com" && password == "Miral1992Miro") {
-      _currentUser = User(
-        id: "0",
-        name: "Admin",
-        email: email,
-        password: password,
-      );
-      await saveCurrentUser();
-      notifyListeners();
-      return true;
-    }
-
-    final user = _users.firstWhere(
-      (u) => u.email == email && u.password == password,
-      orElse: () => User(id: '', name: '', email: '', password: ''),
-    );
-
-    if (user.id.isNotEmpty) {
-      _currentUser = user;
-      await saveCurrentUser();
-      notifyListeners();
-      return true;
-    }
-
-    return false;
-  }
-
-  // تسجيل الخروج
-  Future<void> logout() async {
-    _currentUser = null;
-    await saveCurrentUser();
-    notifyListeners();
-  }
-
-  // إضافة رصيد
-  Future<bool> addBalance(String userId, double amount) async {
-    final index = _users.indexWhere((u) => u.id == userId);
-    if (index != -1) {
-      _users[index].balance += amount;
-      await saveUsers();
-      notifyListeners();
-      return true;
-    }
-    return false;
-  }
-
-  // حذف مستخدم
   Future<bool> deleteUser(String userId) async {
     _users.removeWhere((u) => u.id == userId);
     await saveUsers();
@@ -222,48 +104,45 @@ class UserProvider with ChangeNotifier {
     return true;
   }
 
-  // تحميل طلبات الشحن
+  // طلبات الشحن
+
   Future<void> loadRechargeRequests() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? data = prefs.getString('recharge_requests');
+    final data = prefs.getString('rechargeRequests');
     if (data != null) {
-      List<dynamic> decoded = jsonDecode(data);
-      _rechargeRequests = decoded.map((map) => RechargeRequest.fromMap(map)).toList();
+      final List<dynamic> decoded = jsonDecode(data);
+      _rechargeRequests = decoded.map((e) => RechargeRequest.fromMap(e)).toList();
     }
     notifyListeners();
   }
 
-  // حفظ طلبات الشحن
   Future<void> saveRechargeRequests() async {
     final prefs = await SharedPreferences.getInstance();
-    List<Map<String, dynamic>> mapped = _rechargeRequests.map((r) => r.toMap()).toList();
-    await prefs.setString('recharge_requests', jsonEncode(mapped));
+    List<Map<String, dynamic>> mapped = _rechargeRequests.map((e) => e.toMap()).toList();
+    await prefs.setString('rechargeRequests', jsonEncode(mapped));
   }
 
-  // إرسال طلب شحن جديد
-  Future<void> sendRechargeRequest(double amount) async {
-    if (_currentUser == null) return;
-
-    final newRequest = RechargeRequest(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: _currentUser!.id,
-      amount: amount,
-      status: 'pending',
-      timestamp: DateTime.now(),
-    );
-
-    _rechargeRequests.add(newRequest);
+  Future<void> addRechargeRequest(RechargeRequest request) async {
+    _rechargeRequests.add(request);
     await saveRechargeRequests();
     notifyListeners();
   }
 
-  // تحديث حالة طلب شحن (مثلاً: completed أو rejected)
-  Future<void> updateRechargeRequestStatus(String requestId, String newStatus) async {
-    final index = _rechargeRequests.indexWhere((r) => r.id == requestId);
-    if (index != -1) {
-      _rechargeRequests[index].status = newStatus;
-      await saveRechargeRequests();
-      notifyListeners();
-    }
+  Future<void> removeRechargeRequest(String id) async {
+    _rechargeRequests.removeWhere((r) => r.id == id);
+    await saveRechargeRequests();
+    notifyListeners();
+  }
+
+  Future<void> approveRechargeRequest(String requestId) async {
+    final request = _rechargeRequests.firstWhere((r) => r.id == requestId, orElse: () => RechargeRequest(id: '', userId: '', amount: 0, receiptImagePath: ''));
+    if (request.id.isEmpty) return;
+    await addBalance(request.userId, request.amount);
+    await removeRechargeRequest(requestId);
+  }
+
+  Future<void> logout() async {
+    currentUser = null;
+    notifyListeners();
   }
 }

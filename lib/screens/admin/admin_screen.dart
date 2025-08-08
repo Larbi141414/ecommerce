@@ -7,7 +7,7 @@ class AdminScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('لوحة تحكم الإدمن'),
+        title: const Text('لوحة تحكم الأدمن'),
         backgroundColor: Colors.redAccent,
         centerTitle: true,
       ),
@@ -15,30 +15,30 @@ class AdminScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            ElevatedButton.icon(
-              icon: const Icon(Icons.people),
-              label: const Text('إدارة المستخدمين'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, minimumSize: const Size.fromHeight(50)),
-              onPressed: () => Navigator.pushNamed(context, '/admin/users'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.inventory_2),
-              label: const Text('إدارة المنتجات'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, minimumSize: const Size.fromHeight(50)),
-              onPressed: () => Navigator.pushNamed(context, '/admin/products'),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.receipt_long),
-              label: const Text('عرض الطلبات (مؤقت)'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, minimumSize: const Size.fromHeight(50)),
+            ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('واجهة الطلبات ستكون هنا')),
-                );
+                Navigator.pushNamed(context, '/admin/users');
               },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+              child: const Text('إدارة المستخدمين'),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/admin/products');
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+              child: const Text('إدارة المنتجات'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/admin/recharge_requests');
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+              child: const Text('طلبات شحن الرصيد'),
+            ),
+            // أزرار إضافية إذا أردت ...
           ],
         ),
       ),

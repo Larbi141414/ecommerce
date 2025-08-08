@@ -14,6 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   shared_preferences: ^2.3.2   # مكتبة التخزين المحلي
+  image_picker: ^0.8.7+4       # مكتبة اختيار الصور من المعرض أو الكاميرا
 
 dev_dependencies:
   flutter_test:
