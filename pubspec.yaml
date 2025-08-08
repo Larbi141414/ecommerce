@@ -23,12 +23,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # إذا أردت إضافة صور أو أي أصول مستقبلًا
-  # assets:
-  #   - assets/images/
-
-  # إذا أردت إضافة خطوط مخصصة مستقبلًا
-  # fonts:
-  #   - family: MyFont
-  #     fonts:
-  #       - asset: assets/fonts/MyFont-Regular.ttf
+  # أصول المشروع - إضافة مجلد الصور
+  assets:
+    - assets/images/
