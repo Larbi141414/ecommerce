@@ -18,52 +18,76 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           child: SafeArea(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // عنوان التطبيق في الوسط
-                const Text(
-                  'DZ SHOPING',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    shadows: [
-                      Shadow(
-                        offset: Offset(0, 1),
-                        blurRadius: 3,
-                        color: Colors.black26,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // عنوان التطبيق في الوسط
+                  const Text(
+                    'DZ SHOPING',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 22,
+                      shadows: [
+                        Shadow(
+                          offset: Offset(0, 1),
+                          blurRadius: 3,
+                          color: Colors.black26,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // زر تسجيل الدخول على اليسار كزر ElevatedButton صغير
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.teal.shade700,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 3,
                       ),
-                    ],
-                  ),
-                ),
-                // زر تسجيل الدخول على اليسار
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: const Text(
-                      'تسجيل الدخول',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      child: const Text(
+                        'تسجيل الدخول',
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                   ),
-                ),
-                // زر تسجيل على اليمين
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/register');
-                    },
-                    child: const Text(
-                      'تسجيل',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+
+                  // زر تسجيل على اليمين كزر OutlinedButton صغير
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.white),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text(
+                        'تسجيل',
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
