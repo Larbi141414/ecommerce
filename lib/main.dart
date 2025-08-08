@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'providers/user_provider.dart';
-import 'providers/product_provider.dart';
-import 'screens/splash_screen.dart';
+import 'screens/auth/welcome_screen.dart';
+import 'screens/auth/register_screen.dart';
+import 'screens/auth/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,19 +13,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'DZ SHOPING',
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-        ),
-        home: const SplashScreen(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'DZ SHOPING',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
       ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const WelcomeScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/login': (context) => const LoginScreen(),
+      },
     );
   }
 }
