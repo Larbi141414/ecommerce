@@ -2,16 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/user.dart';
+import '../models/user.dart';  // AppUser
 import '../models/recharge_request.dart';
 
 class UserProvider with ChangeNotifier {
-  List<User> _users = [];
-  User? currentUser;
+  List<AppUser> _users = [];
+  AppUser? currentUser;
 
   List<RechargeRequest> _rechargeRequests = [];
 
-  List<User> get allUsers => _users;
+  List<AppUser> get allUsers => _users;
   List<RechargeRequest> get rechargeRequests => _rechargeRequests;
 
   // تحميل المستخدمين من SharedPreferences
@@ -20,7 +20,7 @@ class UserProvider with ChangeNotifier {
     final data = prefs.getString('users');
     if (data != null) {
       final List<dynamic> decoded = jsonDecode(data);
-      _users = decoded.map((e) => User.fromMap(e)).toList();
+      _users = decoded.map((e) => AppUser.fromMap(e)).toList();
     }
     notifyListeners();
   }
@@ -37,10 +37,11 @@ class UserProvider with ChangeNotifier {
     final exists = _users.any((u) => u.email == email);
     if (exists) return false;
 
-    final newUser = User(
+    final newUser = AppUser(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
       email: email,
+      password: password,
       balance: 0,
     );
 
@@ -66,7 +67,7 @@ class UserProvider with ChangeNotifier {
   Future<bool> addBalance(String userId, double amount) async {
     final user = _users.firstWhere(
       (u) => u.id == userId,
-      orElse: () => User(id: '', name: '', email: ''),
+      orElse: () => AppUser(id: '', name: '', email: '', password: ''),
     );
     if (user.id.isEmpty) return false;
 
