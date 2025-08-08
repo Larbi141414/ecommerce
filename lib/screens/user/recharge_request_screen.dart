@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../models/recharge_request.dart';  // استيراد نموذج بيانات الطلب
 
 class RechargeRequestScreen extends StatefulWidget {
   const RechargeRequestScreen({super.key});
@@ -18,8 +19,10 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
   final _picker = ImagePicker();
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    final pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
     if (pickedFile != null) {
       setState(() {
         _receiptImage = File(pickedFile.path);
@@ -86,7 +89,6 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
               ),
             ),
             const SizedBox(height: 30),
-
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
@@ -96,9 +98,7 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
                 prefixIcon: const Icon(Icons.attach_money),
               ),
             ),
-
             const SizedBox(height: 20),
-
             ElevatedButton.icon(
               onPressed: _pickImage,
               icon: const Icon(Icons.photo_library_outlined),
@@ -110,9 +110,7 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
                 textStyle: const TextStyle(fontSize: 16),
               ),
             ),
-
             const SizedBox(height: 15),
-
             if (_receiptImage != null)
               Center(
                 child: ClipRRect(
@@ -125,7 +123,6 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
                   ),
                 ),
               ),
-
             if (_receiptImage == null)
               Center(
                 child: Text(
@@ -133,9 +130,7 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
                   style: TextStyle(color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                 ),
               ),
-
             const SizedBox(height: 40),
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -205,19 +200,4 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
       ),
     );
   }
-}
-
-// نموذج بيانات الطلب (تأكد من تعريفه في مكان ما في مشروعك)
-class RechargeRequest {
-  final String id;
-  final String userId;
-  final double amount;
-  final String receiptImagePath;
-
-  RechargeRequest({
-    required this.id,
-    required this.userId,
-    required this.amount,
-    required this.receiptImagePath,
-  });
 }

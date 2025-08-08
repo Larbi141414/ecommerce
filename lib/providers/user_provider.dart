@@ -2,64 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class User {
-  final String id;
-  final String name;
-  final String email;
-  double balance;
-
-  User({required this.id, required this.name, required this.email, this.balance = 0.0});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'balance': balance,
-    };
-  }
-
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      id: map['id'],
-      name: map['name'],
-      email: map['email'],
-      balance: (map['balance'] ?? 0).toDouble(),
-    );
-  }
-}
-
-class RechargeRequest {
-  final String id; // رقم فريد
-  final String userId;
-  final double amount;
-  final String receiptImagePath;
-
-  RechargeRequest({
-    required this.id,
-    required this.userId,
-    required this.amount,
-    required this.receiptImagePath,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'userId': userId,
-      'amount': amount,
-      'receiptImagePath': receiptImagePath,
-    };
-  }
-
-  factory RechargeRequest.fromMap(Map<String, dynamic> map) {
-    return RechargeRequest(
-      id: map['id'],
-      userId: map['userId'],
-      amount: (map['amount'] ?? 0).toDouble(),
-      receiptImagePath: map['receiptImagePath'],
-    );
-  }
-}
+import '../models/user.dart';
+import '../models/recharge_request.dart';
 
 class UserProvider with ChangeNotifier {
   List<User> _users = [];
@@ -90,11 +34,9 @@ class UserProvider with ChangeNotifier {
 
   // تسجيل مستخدم جديد
   Future<bool> register(String name, String email, String password) async {
-    // تحقق من وجود البريد مسبقاً
     final exists = _users.any((u) => u.email == email);
     if (exists) return false;
 
-    // إنشاء مستخدم جديد (يمكنك هنا إضافة تشفير كلمة المرور لو أردت)
     final newUser = User(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       name: name,
@@ -108,9 +50,8 @@ class UserProvider with ChangeNotifier {
     return true;
   }
 
-  // تسجيل الدخول
+  // تسجيل الدخول (تجاهل كلمة المرور هنا)
   Future<bool> login(String email, String password) async {
-    // البحث عن المستخدم بالبريد (تجاهل كلمة المرور هنا، قم بتعديل حسب الحاجة)
     try {
       final user = _users.firstWhere((u) => u.email == email);
       currentUser = user;
@@ -128,6 +69,7 @@ class UserProvider with ChangeNotifier {
       orElse: () => User(id: '', name: '', email: ''),
     );
     if (user.id.isEmpty) return false;
+
     user.balance += amount;
     await saveUsers();
     notifyListeners();
