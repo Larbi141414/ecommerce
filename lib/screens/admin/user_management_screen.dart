@@ -67,8 +67,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           ElevatedButton(
             onPressed: () async {
               final id = _idController.text.trim();
-              final amount =
-                  double.tryParse(_amountController.text.trim()) ?? -1;
+              final amount = double.tryParse(_amountController.text.trim()) ?? -1;
 
               if (id.isEmpty || amount <= 0) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -142,7 +141,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          ...userProv.users.map((u) {
+          ...userProv.allUsers.map((u) {
             return Card(
               child: ListTile(
                 title: Text('${u.name} (${u.email})'),
