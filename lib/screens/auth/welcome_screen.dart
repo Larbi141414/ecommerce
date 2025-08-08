@@ -23,8 +23,7 @@ class WelcomeScreen extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // عنوان التطبيق في الوسط
-                  
+                  // حذف عنوان التطبيق في الوسط
 
                   // زر تسجيل الدخول على اليسار كزر ElevatedButton صغير
                   Align(
@@ -79,13 +78,10 @@ class WelcomeScreen extends StatelessWidget {
         ),
       ),
 
-      // محتوى الصفحة
+      // محتوى الصفحة بيضاء فقط
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE0F7F9), Color(0xFFB2DFDB)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        color: Colors.white,
+      ),
+    );
+  }
 }
