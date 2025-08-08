@@ -11,36 +11,57 @@ class AdminScreen extends StatelessWidget {
         backgroundColor: Colors.redAccent,
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.red.shade50, Colors.red.shade100],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/admin/users');
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              child: const Text('إدارة المستخدمين'),
+            _buildAdminButton(
+              context,
+              label: 'إدارة المستخدمين',
+              onPressed: () => Navigator.pushNamed(context, '/admin/users'),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/admin/products');
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              child: const Text('إدارة المنتجات'),
+            const SizedBox(height: 20),
+            _buildAdminButton(
+              context,
+              label: 'إدارة المنتجات',
+              onPressed: () => Navigator.pushNamed(context, '/admin/products'),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/admin/recharge_requests');
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              child: const Text('طلبات شحن الرصيد'),
+            const SizedBox(height: 20),
+            _buildAdminButton(
+              context,
+              label: 'طلبات شحن الرصيد',
+              onPressed: () => Navigator.pushNamed(context, '/admin/recharge_requests'),
             ),
-            // أزرار إضافية إذا أردت ...
+            // يمكنك إضافة أزرار إضافية هنا بسهولة
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAdminButton(BuildContext context,
+      {required String label, required VoidCallback onPressed}) {
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.redAccent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        child: Text(label),
       ),
     );
   }

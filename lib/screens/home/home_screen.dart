@@ -1,4 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/product_provider.dart';
+import '../../providers/user_provider.dart';
+
+// افتراض وجود هذه الشاشات/ويدجت
+import 'cart_screen.dart';
+import 'orders_screen.dart';
+import '../../widgets/search_bar_widget.dart';
+import '../../widgets/product_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,17 +43,21 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart, color: Colors.white),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const CartScreen()),
-            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CartScreen()),
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.receipt_long, color: Colors.white),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const OrdersScreen()),
-            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const OrdersScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -60,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
-              'رصيدك: ${userProvider.currentUser?.balance ?? 0} دج',
+              'رصيدك: ${userProvider.currentUser?.balance.toStringAsFixed(2) ?? '0.00'} دج',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,

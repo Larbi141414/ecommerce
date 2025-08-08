@@ -50,20 +50,26 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
           // إضافة رصيد
           const Text(
             'إضافة رصيد لمستخدم (أدخل ID والمبلغ)',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           const SizedBox(height: 8),
           TextField(
             controller: _idController,
-            decoration: const InputDecoration(labelText: 'User ID'),
+            decoration: const InputDecoration(
+              labelText: 'User ID',
+              border: OutlineInputBorder(),
+            ),
           ),
           const SizedBox(height: 8),
           TextField(
             controller: _amountController,
-            decoration: const InputDecoration(labelText: 'المبلغ (دج)'),
+            decoration: const InputDecoration(
+              labelText: 'المبلغ (دج)',
+              border: OutlineInputBorder(),
+            ),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () async {
               final id = _idController.text.trim();
@@ -71,9 +77,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
               if (id.isEmpty || amount <= 0) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('ادخل ID صحيح ومبلغ أكبر من 0'),
-                  ),
+                  const SnackBar(content: Text('ادخل ID صحيح ومبلغ أكبر من 0')),
                 );
                 return;
               }
@@ -81,68 +85,73 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               final ok = await userProv.addBalance(id, amount);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    ok ? 'تم إضافة الرصيد' : 'لم يتم العثور على المستخدم',
-                  ),
+                  content: Text(ok ? 'تم إضافة الرصيد' : 'لم يتم العثور على المستخدم'),
                 ),
               );
+
               if (ok) {
                 _idController.clear();
                 _amountController.clear();
               }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             child: const Text('إضافة رصيد'),
           ),
-          const Divider(height: 30),
+
+          const Divider(height: 40),
 
           // حذف مستخدم
           const Text(
             'حذف مستخدم (أدخل ID)',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           const SizedBox(height: 8),
           TextField(
             controller: _deleteIdController,
-            decoration: const InputDecoration(labelText: 'User ID'),
+            decoration: const InputDecoration(
+              labelText: 'User ID',
+              border: OutlineInputBorder(),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () async {
               final id = _deleteIdController.text.trim();
+
               if (id.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('ادخل ID صحيح')),
                 );
                 return;
               }
+
               final ok = await userProv.deleteUser(id);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(
-                    ok ? 'تم حذف المستخدم' : 'لم يتم العثور على المستخدم',
-                  ),
+                  content: Text(ok ? 'تم حذف المستخدم' : 'لم يتم العثور على المستخدم'),
                 ),
               );
+
               if (ok) _deleteIdController.clear();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             child: const Text('حذف مستخدم'),
           ),
-          const Divider(height: 30),
+
+          const Divider(height: 40),
 
           // قائمة المستخدمين
           const Text(
             'قائمة المستخدمين',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
           const SizedBox(height: 8),
+
           ...userProv.allUsers.map((u) {
             return Card(
+              margin: const EdgeInsets.symmetric(vertical: 6),
+              elevation: 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               child: ListTile(
                 title: Text('${u.name} (${u.email})'),
                 subtitle: Text(
@@ -167,9 +176,9 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                               Navigator.pop(ctx);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(ok
-                                      ? 'تم حذف المستخدم'
-                                      : 'لم يتم العثور على المستخدم'),
+                                  content: Text(
+                                    ok ? 'تم حذف المستخدم' : 'لم يتم العثور على المستخدم',
+                                  ),
                                 ),
                               );
                             },

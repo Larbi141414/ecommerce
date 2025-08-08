@@ -21,32 +21,46 @@ class RechargeRequestsScreen extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+
           if (userProv.rechargeRequests.isEmpty) {
             return const Center(child: Text('لا توجد طلبات شحن حالياً'));
           }
+
           return ListView.builder(
             itemCount: userProv.rechargeRequests.length,
             itemBuilder: (context, index) {
               final request = userProv.rechargeRequests[index];
               final user = userProv.allUsers.firstWhere(
                 (u) => u.id == request.userId,
-                orElse: () => null,
+                orElse: () => User(id: 'unknown', name: 'مستخدم غير معروف', email: '', balance: 0.0),
               );
 
               return Card(
-                margin: const EdgeInsets.all(8),
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                elevation: 3,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 child: ListTile(
-                  title: Text(user != null ? '${user.name} (${user.email})' : 'مستخدم غير معروف'),
+                  contentPadding: const EdgeInsets.all(12),
+                  title: Text(
+                    '${user.name} (${user.email.isNotEmpty ? user.email : "بدون بريد إلكتروني"})',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('المبلغ المطلوب: ${request.amount.toStringAsFixed(2)} دج'),
                       const SizedBox(height: 8),
-                      if (request.receiptImagePath.isNotEmpty)
-                        Image.file(
-                          File(request.receiptImagePath),
-                          height: 150,
-                          fit: BoxFit.cover,
+                      Text('المبلغ المطلوب: ${request.amount.toStringAsFixed(2)} دج',
+                          style: const TextStyle(fontSize: 16)),
+                      const SizedBox(height: 8),
+                      if (request.receiptImagePath.isNotEmpty && File(request.receiptImagePath).existsSync())
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(request.receiptImagePath),
+                            height: 150,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                         )
                       else
                         const Text('لا توجد صورة'),
