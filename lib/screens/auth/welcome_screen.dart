@@ -66,7 +66,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        'تسجيل',
+                        'تسجيل حساب',
                         style: TextStyle(fontSize: 14),
                       ),
                     ),
