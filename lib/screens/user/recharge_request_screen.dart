@@ -34,4 +34,4 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
           children: [
             const Text(
               'طريقة الدفع عبر Baridimob',
-              style: TextStyle(fontWeight: FontWeight.bold
+              style: TextStyle(fontWeight: FontWeight.bold)
