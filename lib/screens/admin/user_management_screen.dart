@@ -31,6 +31,18 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         title: const Text('إدارة المستخدمين'),
         backgroundColor: Colors.redAccent,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'تسجيل الخروج',
+            onPressed: () async {
+              await userProv.logout();
+              if (mounted) {
+                Navigator.pushReplacementNamed(context, '/login');
+              }
+            },
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -85,7 +97,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             ),
             child: const Text('إضافة رصيد'),
           ),
-
           const Divider(height: 30),
 
           // حذف مستخدم
@@ -123,7 +134,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             ),
             child: const Text('حذف مستخدم'),
           ),
-
           const Divider(height: 30),
 
           // قائمة المستخدمين

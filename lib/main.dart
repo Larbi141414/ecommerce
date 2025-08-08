@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'providers/user_provider.dart';
+
 import 'screens/auth/welcome_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/login_screen.dart';
+
 import 'screens/user/user_home.dart';
+import 'screens/user/recharge_request_screen.dart';   // <-- أضف هذا السطر
+
 import 'screens/admin/admin_screen.dart';
 import 'screens/admin/user_management_screen.dart';
 import 'screens/admin/product_management_screen.dart';
@@ -43,6 +48,7 @@ class MyApp extends StatelessWidget {
               '/register': (context) => const RegisterScreen(),
               '/login': (context) => const LoginScreen(),
               '/user_home': (context) => const UserHome(),
+              '/recharge_request': (context) => const RechargeRequestScreen(),   // <-- أضف هذا السطر
               '/admin': (context) => const AdminScreen(),
               '/admin/users': (context) => const UserManagementScreen(),
               '/admin/products': (context) => const ProductManagementScreen(),
