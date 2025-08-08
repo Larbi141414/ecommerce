@@ -46,6 +46,22 @@ class MyApp extends StatelessWidget {
           '/admin/users': (context) => const UserManagementScreen(),
           '/admin/products': (context) => const ProductManagementScreen(),
         },
+        onGenerateRoute: (settings) {
+          // هذا الجزء يحدد الوجهة بعد تسجيل الدخول
+          if (settings.name == '/check_role') {
+            final args = settings.arguments as Map<String, String>;
+            final email = args['email'] ?? '';
+            final password = args['password'] ?? '';
+
+            if (email == 'larbilarabi06@gmail.com' &&
+                password == 'Miral1992Miro') {
+              return MaterialPageRoute(builder: (_) => const AdminScreen());
+            } else {
+              return MaterialPageRoute(builder: (_) => const UserHome());
+            }
+          }
+          return null;
+        },
       ),
     );
   }

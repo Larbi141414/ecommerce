@@ -12,10 +12,7 @@ class UserHome extends StatelessWidget {
         centerTitle: true,
       ),
       body: const Center(
-        child: Text(
-          "مرحبًا بك كمستخدم عادي",
-          style: TextStyle(fontSize: 22),
-        ),
+        child: Text("مرحبًا بك كمستخدم عادي", style: TextStyle(fontSize: 22)),
       ),
     );
   }

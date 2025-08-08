@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
-import '../../models/user.dart';
 
 class UserManagementScreen extends StatefulWidget {
   const UserManagementScreen({super.key});
@@ -89,7 +88,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.redAccent),
                   onPressed: () {
-                    // تأكيد الحذف
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(

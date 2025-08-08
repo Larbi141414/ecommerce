@@ -3,7 +3,6 @@ import '../models/user.dart';
 
 class UserProvider extends ChangeNotifier {
   final List<AppUser> _users = [
-    // حساب الإدمن الافتراضي (للتجربة)
     AppUser(
       id: 'admin',
       name: 'Administrator',
@@ -11,7 +10,6 @@ class UserProvider extends ChangeNotifier {
       password: 'Miral1992Miro',
       balance: 0.0,
     ),
-    // مستخدم تجريبي
     AppUser(
       id: 'u1',
       name: 'Ali',
