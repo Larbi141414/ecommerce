@@ -35,6 +35,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // إضافة رصيد
           const Text(
             'إضافة رصيد لمستخدم (أدخل ID والمبلغ)',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -60,8 +61,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               if (id.isEmpty || amount <= 0) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                      content:
-                          Text('ادخل ID صحيح ومبلغ أكبر من 0')),
+                    content: Text('ادخل ID صحيح ومبلغ أكبر من 0'),
+                  ),
                 );
                 return;
               }
@@ -84,7 +85,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             ),
             child: const Text('إضافة رصيد'),
           ),
+
           const Divider(height: 30),
+
+          // حذف مستخدم
           const Text(
             'حذف مستخدم (أدخل ID)',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -119,7 +123,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             ),
             child: const Text('حذف مستخدم'),
           ),
+
           const Divider(height: 30),
+
+          // قائمة المستخدمين
           const Text(
             'قائمة المستخدمين',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -130,7 +137,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               child: ListTile(
                 title: Text('${u.name} (${u.email})'),
                 subtitle: Text(
-                    'ID: ${u.id} — رصيد: ${u.balance.toStringAsFixed(2)} دج'),
+                  'ID: ${u.id} — رصيد: ${u.balance.toStringAsFixed(2)} دج',
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.redAccent),
                   onPressed: () {
@@ -146,8 +154,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              await userProv.deleteUser(u.id);
+                              final ok = await userProv.deleteUser(u.id);
                               Navigator.pop(ctx);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(ok
+                                      ? 'تم حذف المستخدم'
+                                      : 'لم يتم العثور على المستخدم'),
+                                ),
+                              );
                             },
                             child: const Text(
                               'حذف',

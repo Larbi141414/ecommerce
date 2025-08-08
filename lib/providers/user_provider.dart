@@ -43,7 +43,9 @@ class UserProvider with ChangeNotifier {
   User? _currentUser;
 
   User? get currentUser => _currentUser;
-  List<User> get allUsers => _users;
+
+  // Getter لتوافق الكود مع الشاشة
+  List<User> get users => _users;
 
   UserProvider() {
     _init();
@@ -164,20 +166,27 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // إضافة رصيد
-  Future<void> addBalance(String userId, double amount) async {
+  // إضافة رصيد مع إرجاع true/false
+  Future<bool> addBalance(String userId, double amount) async {
     final index = _users.indexWhere((u) => u.id == userId);
     if (index != -1) {
       _users[index].balance += amount;
       await saveUsers();
       notifyListeners();
+      return true;
     }
+    return false;
   }
 
-  // حذف مستخدم
-  Future<void> deleteUser(String userId) async {
-    _users.removeWhere((u) => u.id == userId);
-    await saveUsers();
-    notifyListeners();
+  // حذف مستخدم مع إرجاع true/false
+  Future<bool> deleteUser(String userId) async {
+    final index = _users.indexWhere((u) => u.id == userId);
+    if (index != -1) {
+      _users.removeAt(index);
+      await saveUsers();
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 }
