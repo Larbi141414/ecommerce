@@ -12,25 +12,33 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _loading = false;
 
-  void _login() {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
+  Future<void> _login() async {
+    setState(() {
+      _loading = true;
+    });
 
-    // تفقد بيانات الإدمن الصريحة
-    if (email == 'larbilarabi06@gmail.com' && password == 'Miral1992Miro') {
-      Navigator.pushReplacementNamed(context, '/admin');
-      return;
-    }
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    bool success = await userProvider.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
 
-    // تحقق من مستخدم عادي عبر UserProvider
-    final userProv = Provider.of<UserProvider>(context, listen: false);
-    final user = userProv.authenticate(email, password);
-    if (user != null) {
-      Navigator.pushReplacementNamed(context, '/user_home');
+    setState(() {
+      _loading = false;
+    });
+
+    if (success) {
+      if (_emailController.text.trim() == "larbilarabi06@gmail.com" &&
+          _passwordController.text.trim() == "Miral1992Miro") {
+        Navigator.pushReplacementNamed(context, '/admin');
+      } else {
+        Navigator.pushReplacementNamed(context, '/user_home');
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('بيانات خاطئة أو المستخدم غير موجود')),
+        const SnackBar(content: Text('البريد أو كلمة المرور غير صحيحة')),
       );
     }
   }
@@ -38,25 +46,28 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('تسجيل الدخول'),
-        backgroundColor: Colors.teal,
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("تسجيل الدخول")),
       body: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(controller: _emailController, decoration: const InputDecoration(labelText: 'البريد الإلكتروني')),
-            const SizedBox(height: 10),
-            TextField(controller: _passwordController, decoration: const InputDecoration(labelText: 'كلمة المرور'), obscureText: true),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, minimumSize: const Size(double.infinity, 50)),
-              child: const Text('دخول', style: TextStyle(fontSize: 18)),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: "البريد الإلكتروني"),
             ),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: "كلمة المرور"),
+            ),
+            const SizedBox(height: 20),
+            _loading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _login,
+                    child: const Text("تسجيل الدخول"),
+                  ),
           ],
         ),
       ),

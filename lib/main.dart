@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-// صفحات المستخدم
+import 'providers/user_provider.dart';
 import 'screens/auth/welcome_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/user/user_home.dart';
-
-// صفحات الإدمن
 import 'screens/admin/admin_screen.dart';
 import 'screens/admin/user_management_screen.dart';
 import 'screens/admin/product_management_screen.dart';
-
-// الـ Providers
-import 'providers/user_provider.dart';
-import 'providers/product_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,39 +21,33 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'DZ SHOPING',
-        theme: ThemeData(primarySwatch: Colors.teal),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const WelcomeScreen(),
-          '/register': (context) => const RegisterScreen(),
-          '/login': (context) => const LoginScreen(),
-          '/user_home': (context) => const UserHome(),
+      child: Consumer<UserProvider>(
+        builder: (context, userProvider, _) {
+          Widget startScreen = const WelcomeScreen();
 
-          // مسارات الإدمن
-          '/admin': (context) => const AdminScreen(),
-          '/admin/users': (context) => const UserManagementScreen(),
-          '/admin/products': (context) => const ProductManagementScreen(),
-        },
-        onGenerateRoute: (settings) {
-          // هذا الجزء يحدد الوجهة بعد تسجيل الدخول
-          if (settings.name == '/check_role') {
-            final args = settings.arguments as Map<String, String>;
-            final email = args['email'] ?? '';
-            final password = args['password'] ?? '';
-
-            if (email == 'larbilarabi06@gmail.com' &&
-                password == 'Miral1992Miro') {
-              return MaterialPageRoute(builder: (_) => const AdminScreen());
+          if (userProvider.currentUser != null) {
+            if (userProvider.currentUser!.id == "0") {
+              startScreen = const AdminScreen();
             } else {
-              return MaterialPageRoute(builder: (_) => const UserHome());
+              startScreen = const UserHome();
             }
           }
-          return null;
+
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'DZ SHOPING',
+            theme: ThemeData(primarySwatch: Colors.teal),
+            home: startScreen,
+            routes: {
+              '/register': (context) => const RegisterScreen(),
+              '/login': (context) => const LoginScreen(),
+              '/user_home': (context) => const UserHome(),
+              '/admin': (context) => const AdminScreen(),
+              '/admin/users': (context) => const UserManagementScreen(),
+              '/admin/products': (context) => const ProductManagementScreen(),
+            },
+          );
         },
       ),
     );
