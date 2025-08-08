@@ -15,7 +15,6 @@ class RechargeRequestScreen extends StatefulWidget {
 class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
   final _amountController = TextEditingController();
   File? _receiptImage;
-
   final _picker = ImagePicker();
 
   Future<void> _pickImage() async {
@@ -43,115 +42,182 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
       appBar: AppBar(
         title: const Text('طلب شحن الرصيد'),
         backgroundColor: Colors.redAccent,
+        centerTitle: true,
+        elevation: 4,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'طريقة الدفع عبر Baridimob',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'يرجى إرسال المبلغ مع صورة الإيصال إلى رقم الحساب التالي:',
-            ),
-            const SizedBox(height: 8),
-            SelectableText(
-              '00799999001880013078',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal.shade700,
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              color: Colors.red.shade50,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'طريقة الدفع عبر Baridimob',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'يرجى إرسال المبلغ مع صورة الإيصال إلى رقم الحساب التالي:',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    const SizedBox(height: 10),
+                    SelectableText(
+                      '00799999001880013078',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.teal.shade700,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 30),
 
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'المبلغ المراد شحنه (دج)',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                prefixIcon: const Icon(Icons.attach_money),
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             ElevatedButton.icon(
               onPressed: _pickImage,
-              icon: const Icon(Icons.photo),
+              icon: const Icon(Icons.photo_library_outlined),
               label: const Text('اختر صورة الإيصال'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                textStyle: const TextStyle(fontSize: 16),
+              ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 15),
 
             if (_receiptImage != null)
-              SizedBox(
-                height: 150,
-                child: Image.file(_receiptImage!),
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(
+                    _receiptImage!,
+                    height: 180,
+                    width: 180,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
 
-            const Spacer(),
+            if (_receiptImage == null)
+              Center(
+                child: Text(
+                  'لم يتم اختيار صورة الإيصال',
+                  style: TextStyle(color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+                ),
+              ),
 
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              onPressed: () async {
-                final amount = double.tryParse(_amountController.text.trim()) ?? 0;
+            const SizedBox(height: 40),
 
-                if (amount <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('الرجاء إدخال مبلغ صحيح')),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 6,
+                  shadowColor: Colors.red.shade700,
+                ),
+                onPressed: () async {
+                  final amount = double.tryParse(_amountController.text.trim()) ?? 0;
+
+                  if (amount <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('الرجاء إدخال مبلغ صحيح')),
+                    );
+                    return;
+                  }
+
+                  if (_receiptImage == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('يرجى اختيار صورة الإيصال')),
+                    );
+                    return;
+                  }
+
+                  if (currentUser == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('يجب تسجيل الدخول أولاً')),
+                    );
+                    return;
+                  }
+
+                  final requestId = DateTime.now().millisecondsSinceEpoch.toString();
+
+                  final newRequest = RechargeRequest(
+                    id: requestId,
+                    userId: currentUser.id,
+                    amount: amount,
+                    receiptImagePath: _receiptImage!.path,
                   );
-                  return;
-                }
 
-                if (_receiptImage == null) {
+                  await userProv.addRechargeRequest(newRequest);
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('يرجى اختيار صورة الإيصال')),
+                    const SnackBar(
+                      content: Text('تم إرسال طلب الشحن، سيتم التواصل معك قريبًا'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 3),
+                    ),
                   );
-                  return;
-                }
 
-                if (currentUser == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('يجب تسجيل الدخول أولاً')),
-                  );
-                  return;
-                }
-
-                // توليد ID فريد للطلب
-                final requestId = DateTime.now().millisecondsSinceEpoch.toString();
-
-                // إنشاء طلب الشحن
-                final newRequest = RechargeRequest(
-                  id: requestId,
-                  userId: currentUser.id,
-                  amount: amount,
-                  receiptImagePath: _receiptImage!.path,
-                );
-
-                // إضافة الطلب عبر المزود
-                await userProv.addRechargeRequest(newRequest);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('تم إرسال طلب الشحن، سيتم التواصل معك قريبًا'),
-                  ),
-                );
-
-                // إعادة تعيين الحقول
-                _amountController.clear();
-                setState(() {
-                  _receiptImage = null;
-                });
-              },
-              child: const Text('إرسال طلب الشحن'),
+                  _amountController.clear();
+                  setState(() {
+                    _receiptImage = null;
+                  });
+                },
+                child: const Text(
+                  'إرسال طلب الشحن',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+// نموذج بيانات الطلب (تأكد من تعريفه في مكان ما في مشروعك)
+class RechargeRequest {
+  final String id;
+  final String userId;
+  final double amount;
+  final String receiptImagePath;
+
+  RechargeRequest({
+    required this.id,
+    required this.userId,
+    required this.amount,
+    required this.receiptImagePath,
+  });
 }
