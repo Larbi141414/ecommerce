@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../../models/user.dart';  // استيراد كلاس AppUser
 
 class RechargeRequestsScreen extends StatelessWidget {
   const RechargeRequestsScreen({super.key});
@@ -32,7 +33,13 @@ class RechargeRequestsScreen extends StatelessWidget {
               final request = userProv.rechargeRequests[index];
               final user = userProv.allUsers.firstWhere(
                 (u) => u.id == request.userId,
-                orElse: () => User(id: 'unknown', name: 'مستخدم غير معروف', email: '', balance: 0.0),
+                orElse: () => AppUser(
+                  id: 'unknown',
+                  name: 'مستخدم غير معروف',
+                  email: '',
+                  password: '',
+                  balance: 0.0,
+                ),
               );
 
               return Card(
