@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../admin/admin_screen.dart';
-import '../user/user_home.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,20 +14,23 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   void _login() {
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-    // بيانات الإدمن
-    if (email == "larbilarabi06@gmail.com" && password == "Miral1992Miro") {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const AdminScreen()),
-      );
+    // تفقد بيانات الإدمن الصريحة
+    if (email == 'larbilarabi06@gmail.com' && password == 'Miral1992Miro') {
+      Navigator.pushReplacementNamed(context, '/admin');
+      return;
+    }
+
+    // تحقق من مستخدم عادي عبر UserProvider
+    final userProv = Provider.of<UserProvider>(context, listen: false);
+    final user = userProv.authenticate(email, password);
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, '/user_home');
     } else {
-      // دخول كمستخدم عادي
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const UserHome()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('بيانات خاطئة أو المستخدم غير موجود')),
       );
     }
   }
@@ -36,8 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("تسجيل الدخول"),
-        backgroundColor: Colors.green,
+        title: const Text('تسجيل الدخول'),
+        backgroundColor: Colors.teal,
         centerTitle: true,
       ),
       body: Padding(
@@ -45,24 +48,14 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: "البريد الإلكتروني"),
-            ),
+            TextField(controller: _emailController, decoration: const InputDecoration(labelText: 'البريد الإلكتروني')),
             const SizedBox(height: 10),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: "كلمة المرور"),
-              obscureText: true,
-            ),
+            TextField(controller: _passwordController, decoration: const InputDecoration(labelText: 'كلمة المرور'), obscureText: true),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _login,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-              ),
-              child: const Text("دخول", style: TextStyle(fontSize: 18)),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.teal, minimumSize: const Size(double.infinity, 50)),
+              child: const Text('دخول', style: TextStyle(fontSize: 18)),
             ),
           ],
         ),

@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-// صفحات البداية والتسجيل وتسجيل الدخول
+// صفحات المستخدم
 import 'screens/auth/welcome_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/login_screen.dart';
-
-// صفحات الإدمن والمستخدم
-import 'screens/admin/admin_screen.dart';
 import 'screens/user/user_home.dart';
+
+// صفحات الإدمن
+import 'screens/admin/admin_screen.dart';
+import 'screens/admin/user_management_screen.dart';
+import 'screens/admin/product_management_screen.dart';
+
+// الـ Providers
+import 'providers/user_provider.dart';
+import 'providers/product_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,20 +25,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'DZ SHOPING',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'DZ SHOPING',
+        theme: ThemeData(primarySwatch: Colors.teal),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const WelcomeScreen(),
+          '/register': (context) => const RegisterScreen(),
+          '/login': (context) => const LoginScreen(),
+          '/user_home': (context) => const UserHome(),
+
+          // مسارات الإدمن
+          '/admin': (context) => const AdminScreen(),
+          '/admin/users': (context) => const UserManagementScreen(),
+          '/admin/products': (context) => const ProductManagementScreen(),
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const WelcomeScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/admin': (context) => const AdminScreen(), // صفحة الإدمن
-        '/user_home': (context) => const UserHome(), // صفحة المستخدم
-      },
     );
   }
 }
