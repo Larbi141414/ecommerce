@@ -97,7 +97,7 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              onPressed: () {
+              onPressed: () async {
                 final amount = double.tryParse(_amountController.text.trim()) ?? 0;
 
                 if (amount <= 0) {
@@ -114,17 +114,34 @@ class _RechargeRequestScreenState extends State<RechargeRequestScreen> {
                   return;
                 }
 
-                // هنا يمكنك إرسال الطلب إلى الأدمن (مثلاً تخزينه في قاعدة بيانات)
-                // كمثال: يمكن تخزين بيانات الطلب في Provider أو Firebase
+                if (currentUser == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('يجب تسجيل الدخول أولاً')),
+                  );
+                  return;
+                }
 
-                // مثال مؤقت: عرض رسالة فقط
+                // توليد ID فريد للطلب
+                final requestId = DateTime.now().millisecondsSinceEpoch.toString();
+
+                // إنشاء طلب الشحن
+                final newRequest = RechargeRequest(
+                  id: requestId,
+                  userId: currentUser.id,
+                  amount: amount,
+                  receiptImagePath: _receiptImage!.path,
+                );
+
+                // إضافة الطلب عبر المزود
+                await userProv.addRechargeRequest(newRequest);
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('تم إرسال طلب الشحن، سيتم التواصل معك قريبًا'),
                   ),
                 );
 
-                // يمكنك إضافة كود مسح الحقول بعد الإرسال
+                // إعادة تعيين الحقول
                 _amountController.clear();
                 setState(() {
                   _receiptImage = null;
